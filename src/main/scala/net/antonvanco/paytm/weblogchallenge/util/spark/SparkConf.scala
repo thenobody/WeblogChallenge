@@ -7,11 +7,8 @@ import org.apache.spark
  */
 object SparkConf {
 
-  val DefaultMaster = "local[*]"
-
-  def apply(applicationName: String, master: String): spark.SparkConf = new spark.SparkConf()
-    .setAppName(applicationName)
+  def apply(applicationName: String, master: String): spark.SparkConf = SparkConf(applicationName)
     .setMaster(master)
 
-  def apply(applicationName: String): spark.SparkConf = SparkConf(applicationName, DefaultMaster)
+  def apply(applicationName: String): spark.SparkConf = new spark.SparkConf().setAppName(applicationName)
 }
