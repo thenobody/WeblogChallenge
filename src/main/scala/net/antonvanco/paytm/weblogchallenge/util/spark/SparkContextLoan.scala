@@ -7,7 +7,7 @@ import org.apache.spark.{SparkConf, SparkContext}
  */
 trait SparkContextLoan {
 
-  def withSparkContextLoan[T](sparkConf: SparkConf)(callback: SparkContext => T): T = {
+  def withSparkContext[T](sparkConf: SparkConf)(callback: SparkContext => T): T = {
     val sparkContext = new SparkContext(sparkConf)
     try {
       callback(sparkContext)

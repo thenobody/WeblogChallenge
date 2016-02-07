@@ -42,5 +42,6 @@ object CsvUtil {
     .replaceAll("\n", """\\n""")
     .replaceAll("\r", """\\r""")
 
-  def toCsv(values: Iterable[String]): String = values.map(escapeField).map(field => s""""$field"""").mkString(",")
+  def toCsv(values: Iterable[String]): String = toCsv(values, DefaultDelimiter)
+  def toCsv(values: Iterable[String], delimiter: Char): String = values.map(escapeField).map(field => s""""$field"""").mkString(delimiter.toString)
 }

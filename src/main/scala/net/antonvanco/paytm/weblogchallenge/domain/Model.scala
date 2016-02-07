@@ -15,7 +15,7 @@ case class Session(id: Int, startTimestamp: Long, endTimestamp: Long) {
   def duration = endTimestamp - startTimestamp
 }
 
-case class LogEntry(timestamp: Long, clientIp: String, request: URI, userAgent: String)
+case class LogEntry(timestamp: Long, clientIp: String, requestUri: URI, userAgent: String)
 
 object LogEntry {
   val ValidHttpMethods = Seq("GET", "POST", "HEAD", "OPTION", "PUT", "DELETE")

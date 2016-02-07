@@ -50,7 +50,7 @@ package object transformation {
     def aggregateLogEntriesByUserSession = self.asInstanceOf[RDD[((String, Int), LogEntry)]]
       .groupByKey()
       .map { case ((userId, sessionId), logEntries) =>
-        val (minTimestamp, maxTimestamp) = logEntries.foldLeft(Long.MaxValue, Long.MinValue) { case (acc, logEntry) =>
+        val (minTimestamp, maxTimestamp) = logEntries.foldLeft(Long.MaxValue, Long.MinValue) { (acc, logEntry) =>
           val min = if (logEntry.timestamp < acc._1) logEntry.timestamp else acc._1
           val max = if (logEntry.timestamp > acc._2) logEntry.timestamp else acc._2
           (min, max)
@@ -69,7 +69,7 @@ package object transformation {
       totalSessionLength.toDouble / totalSessionCount
     }
 
-    def getUniqueUrisBySession = self.mapValues(_.map(_.request).groupBy(identity).keys)
+    def getUniqueUrisBySession = self.mapValues(_.map(_.requestUri).toSet)
 
     def getUserSessionsOrderedByUniqueUriCount = self.getUniqueUrisBySession
       .mapValues(_.size)
@@ -84,7 +84,7 @@ package object transformation {
 
     def getUserSessionCount = self.getSessionCountByUser.map(_._2).reduce(_ + _)
 
-    def getUserCount = self.map { case ((userId, _), _ ) => userId -> null }.keys.count()
+    def getUserCount = self.map { case ((userId, _), _ ) => userId }.distinct().count()
 
     def getAverageSessionCount = {
       val (totalUserCount, totalSessionCount) = self.getSessionCountByUser

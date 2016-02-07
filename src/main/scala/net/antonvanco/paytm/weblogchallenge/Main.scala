@@ -12,7 +12,7 @@ import scala.collection.immutable.ListMap
 object Main extends SparkContextLoan {
   val logger = LoggerFactory.getLogger(getClass)
 
-  def main(args: Array[String]): Unit = withSparkContextLoan(SparkConf(getClass.getSimpleName, "local[*]")) { sparkContext =>
+  def main(args: Array[String]): Unit = withSparkContext(SparkConf(getClass.getSimpleName, "local[*]")) { sparkContext =>
     val userSessionsRdd = container.SessioniseLogEntriesTaskInstance
       .execute("data/2015_07_22_mktplace_shop_web_log_sample.log.gz", sparkContext)
       .cache()
