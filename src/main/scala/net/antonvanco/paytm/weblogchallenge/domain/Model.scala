@@ -8,6 +8,18 @@ import com.github.nscala_time.time.Imports._
  * Created by antonvanco on 07/02/2016.
  */
 object UserKey {
+  /**
+   * As noted in the assignment IPs are generally not a good estimator of a single user.
+   * Additional layer of 'uniqueness' could be added by creating the UserKey from user's IP address _and_ UserAgent string.
+   * The assumption being that multiple users under the same IP (such as a household with multiple devices) will be using
+   * different browsers.
+   * Another approach would be to use Cookie-based session IDs which would be set, expired and renewed by our web service
+   * serving individual users' browsers. In fact, if this were the case it would make PairedLogEntriesRDD.resolveSessionIdsForLogEntries
+   * would become obsolete and could be skipped.
+   *
+   * @param logEntry
+   * @return String UserKey
+   */
   def apply(logEntry: LogEntry): String = logEntry.clientIp
 }
 

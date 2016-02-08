@@ -7,12 +7,18 @@ import org.slf4j.LoggerFactory
 
 /**
  * Created by antonvanco on 07/02/2016.
+ *
+ * The main transformation task for creating sessions from ELB log input
+ *
+ * @param sessionLengthMillis defines the max timestamp difference between user's log entries in order to belong
+ *                            into the same session
  */
 class SessioniseLogEntriesTask(sessionLengthMillis: Long) {
 
   def execute(inputPath: String, sparkContext: SparkContext): RDD[((String, Session), Iterable[LogEntry])] = {
     sparkContext
       .textFile(inputPath)
+      // repartitioning because the expected input is Gzipped and by default Spark creates a single partition when reading compressed input
       .repartition(16)
       .parseRawLogsToLogEntries
       .resolveSessionIdsForLogEntries(sessionLengthMillis)
