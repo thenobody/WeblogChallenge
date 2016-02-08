@@ -86,12 +86,23 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
     result shouldEqual expResult
   }
 
-  it should "order users by session length" in withSparkContext(sparkConf) { sparkContext =>
+  it should "compute session lengths and sort users" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
       ("127.0.0.1:8080", 2000L),
       ("127.0.0.1:8080", 1000L),
       ("127.0.0.2:8080", 0L),
       ("127.0.0.2:8080", 0L),
+      ("127.0.0.2:8080", 0L)
+    )
+
+    val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input)).getUserSessionLengths.collect().toSeq
+
+    result shouldEqual expResult
+  }
+
+  it should "order users by session length" in withSparkContext(sparkConf) { sparkContext =>
+    val expResult = Seq(
+      ("127.0.0.1:8080", 2000L),
       ("127.0.0.2:8080", 0L)
     )
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getUsersOrderedBySessionLength.collect().toSeq
