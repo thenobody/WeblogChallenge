@@ -25,21 +25,21 @@ class LogEntriesRDDSpec extends FlatSpec with Matchers with SparkContextLoan {
     ))
 
     val expResult = Seq(
-      "192.168.1.1:54635" -> new LogEntry(
+      "192.168.1.1" -> new LogEntry(
         DateTime.parse("2015-07-22T09:00:28.019143Z").getMillis,
-        "192.168.1.1:54635",
+        "192.168.1.1",
         new URI("https://paytm.com:443/shop/authresponse?code=f2405b05-e2ee-4b0d-8f6a-9fed0fcfe2e0&state=null"),
         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36"
       ),
-      "192.168.1.1:54635" -> new LogEntry(
+      "192.168.1.1" -> new LogEntry(
         DateTime.parse("2015-07-22T09:10:43.345123Z").getMillis,
-        "192.168.1.1:54635",
+        "192.168.1.1",
         new URI("https://paytm.com:443/shop/authresponse?code=f2405b05-e2ee-4b0d-8f6a-9fed0fcfe2e0&state=null"),
         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36"
       ),
-      "192.168.1.2:8080" -> new LogEntry(
+      "192.168.1.2" -> new LogEntry(
         DateTime.parse("2015-07-22T09:14:03.984578Z").getMillis,
-        "192.168.1.2:8080",
+        "192.168.1.2",
         new URI("https://paytm.com:443/shop/authresponse?code=f2405b05-e2ee-4b0d-8f6a-9fed0fcfe2e0&state=null"),
         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36"
       )

@@ -32,14 +32,22 @@ case class LogEntry(timestamp: Long, clientIp: String, requestUri: URI, userAgen
 object LogEntry {
   val ValidHttpMethods = Seq("GET", "POST", "HEAD", "OPTION", "PUT", "DELETE")
   val RequestRegex = s"""(${ValidHttpMethods.mkString("|")}) (.*) HTTP/1.[0-9]""".r
-  
-  def apply(timestamp: String, clientIp: String, request: String, userAgent: String): LogEntry = {
+  val ipPortRegex = """(([0-9]{1,3}\.){3}[0-9]{1,3})\:([0-9]{1,5})""".r
+
+  def apply(timestamp: String, clientIpPort: String, request: String, userAgent: String): LogEntry = {
     val timestampMillis = new DateTime(timestamp).getMillis
     val uri = request match {
       case RequestRegex(_, uriString) => new URI(uriString)
-      case invalid => throw new IllegalArgumentException(invalid)
+      case invalid => throw new InvalidHttpRequestException(invalid)
+    }
+    val clientIp = clientIpPort match {
+      case ipPortRegex(ip, _, port) => ip
+      case invalid => throw new InvalidClientIpPortException(invalid)
     }
 
     LogEntry(timestampMillis, clientIp, uri, userAgent)
   }
 }
+
+case class InvalidHttpRequestException(request: String) extends IllegalArgumentException(request)
+case class InvalidClientIpPortException(clientIpPort: String) extends IllegalArgumentException(clientIpPort)

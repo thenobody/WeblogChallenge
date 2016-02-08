@@ -25,24 +25,24 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
   val userSession4 = Session(2, currentMillis + sessionTimeoutMillis + 1000, currentMillis + sessionTimeoutMillis + 1000)
   val userSession5 = Session(3, currentMillis + 2 * sessionTimeoutMillis + 1000, currentMillis + 2 * sessionTimeoutMillis + 1000)
   val input = Seq(
-    ("127.0.0.1:8080", userSession1) -> Seq(
-      new LogEntry(currentMillis, "127.0.0.1:8080", new URI("https://localhost:1234/page1"), "UserAgent"),
-      new LogEntry(currentMillis + 1000, "127.0.0.1:8080", new URI("https://localhost:1234/page2"), "UserAgent")
+    ("127.0.0.1", userSession1) -> Seq(
+      new LogEntry(currentMillis, "127.0.0.1", new URI("https://localhost:1234/page1"), "UserAgent"),
+      new LogEntry(currentMillis + 1000, "127.0.0.1", new URI("https://localhost:1234/page2"), "UserAgent")
     ),
-    ("127.0.0.1:8080", userSession2) -> Seq(
-      new LogEntry(currentMillis + sessionTimeoutMillis + 1000, "127.0.0.1:8080", new URI("https://localhost:1234/page3"), "UserAgent"),
-      new LogEntry(currentMillis + sessionTimeoutMillis + 2000, "127.0.0.1:8080", new URI("https://localhost:1234/page4"), "UserAgent"),
-      new LogEntry(currentMillis + sessionTimeoutMillis + 3000, "127.0.0.1:8080", new URI("https://localhost:1234/page4"), "UserAgent")
+    ("127.0.0.1", userSession2) -> Seq(
+      new LogEntry(currentMillis + sessionTimeoutMillis + 1000, "127.0.0.1", new URI("https://localhost:1234/page3"), "UserAgent"),
+      new LogEntry(currentMillis + sessionTimeoutMillis + 2000, "127.0.0.1", new URI("https://localhost:1234/page4"), "UserAgent"),
+      new LogEntry(currentMillis + sessionTimeoutMillis + 3000, "127.0.0.1", new URI("https://localhost:1234/page4"), "UserAgent")
     ),
 
-    ("127.0.0.2:8080", userSession3) -> Seq(
-      new LogEntry(currentMillis, "127.0.0.2:8080", new URI("https://localhost:1234/page1"), "UserAgent")
+    ("127.0.0.2", userSession3) -> Seq(
+      new LogEntry(currentMillis, "127.0.0.2", new URI("https://localhost:1234/page1"), "UserAgent")
     ),
-    ("127.0.0.2:8080", userSession4) -> Seq(
-      new LogEntry(currentMillis + sessionTimeoutMillis + 1000, "127.0.0.2:8080", new URI("https://localhost:1234/page3"), "UserAgent")
+    ("127.0.0.2", userSession4) -> Seq(
+      new LogEntry(currentMillis + sessionTimeoutMillis + 1000, "127.0.0.2", new URI("https://localhost:1234/page3"), "UserAgent")
     ),
-    ("127.0.0.2:8080", userSession5) -> Seq(
-      new LogEntry(currentMillis + 2 * sessionTimeoutMillis + 1000, "127.0.0.2:8080", new URI("https://localhost:1234/page4"), "UserAgent")
+    ("127.0.0.2", userSession5) -> Seq(
+      new LogEntry(currentMillis + 2 * sessionTimeoutMillis + 1000, "127.0.0.2", new URI("https://localhost:1234/page4"), "UserAgent")
     )
   )
 
@@ -55,17 +55,17 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
 
   it should "generate lists of unique URIs per user session" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Map(
-      ("127.0.0.1:8080", userSession1) -> Set(
+      ("127.0.0.1", userSession1) -> Set(
         new URI("https://localhost:1234/page1"),
         new URI("https://localhost:1234/page2")
       ),
-      ("127.0.0.1:8080", userSession2) -> Set(
+      ("127.0.0.1", userSession2) -> Set(
         new URI("https://localhost:1234/page3"),
         new URI("https://localhost:1234/page4")
       ),
-      ("127.0.0.2:8080", userSession3) -> Set(new URI("https://localhost:1234/page1")),
-      ("127.0.0.2:8080", userSession4) -> Set(new URI("https://localhost:1234/page3")),
-      ("127.0.0.2:8080", userSession5) -> Set(new URI("https://localhost:1234/page4"))
+      ("127.0.0.2", userSession3) -> Set(new URI("https://localhost:1234/page1")),
+      ("127.0.0.2", userSession4) -> Set(new URI("https://localhost:1234/page3")),
+      ("127.0.0.2", userSession5) -> Set(new URI("https://localhost:1234/page4"))
 
     )
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getUniqueUrisBySession.collect()
@@ -73,13 +73,13 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
     result should contain theSameElementsAs expResult
   }
 
-  it should "order user sesssions by unique URI count" in withSparkContext(sparkConf) { sparkContext =>
+  it should "order user sessions by unique URI count" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
-      ("127.0.0.1:8080", userSession1) -> 2,
-      ("127.0.0.1:8080", userSession2) -> 2,
-      ("127.0.0.2:8080", userSession3) -> 1,
-      ("127.0.0.2:8080", userSession4) -> 1,
-      ("127.0.0.2:8080", userSession5) -> 1
+      ("127.0.0.1", userSession1) -> 2,
+      ("127.0.0.1", userSession2) -> 2,
+      ("127.0.0.2", userSession3) -> 1,
+      ("127.0.0.2", userSession4) -> 1,
+      ("127.0.0.2", userSession5) -> 1
     )
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getUserSessionsOrderedByUniqueUriCount.collect().toSeq
 
@@ -88,11 +88,11 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
 
   it should "compute session lengths and sort users" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
-      ("127.0.0.1:8080", 2000L),
-      ("127.0.0.1:8080", 1000L),
-      ("127.0.0.2:8080", 0L),
-      ("127.0.0.2:8080", 0L),
-      ("127.0.0.2:8080", 0L)
+      ("127.0.0.1", 2000L),
+      ("127.0.0.1", 1000L),
+      ("127.0.0.2", 0L),
+      ("127.0.0.2", 0L),
+      ("127.0.0.2", 0L)
     )
 
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input)).getUserSessionLengths.collect().toSeq
@@ -102,8 +102,8 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
 
   it should "order users by session length" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
-      ("127.0.0.1:8080", 2000L),
-      ("127.0.0.2:8080", 0L)
+      ("127.0.0.1", 2000L),
+      ("127.0.0.2", 0L)
     )
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getUsersOrderedBySessionLength.collect().toSeq
 
@@ -112,8 +112,8 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
 
   it should "compute session counts for users" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
-      ("127.0.0.2:8080", 3L),
-      ("127.0.0.1:8080", 2L)
+      ("127.0.0.2", 3L),
+      ("127.0.0.1", 2L)
     )
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getSessionCountByUser.collect().toSeq
 

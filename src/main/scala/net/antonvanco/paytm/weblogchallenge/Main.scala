@@ -52,6 +52,8 @@ object Main extends SparkContextLoan {
     )
     val avgUserSessionCount = userSessionsRdd.getAverageSessionCount
 
+    logger.info("RESULTS")
+    logger.info("---------------------")
     logger.info(s"avgUserSessionCount: $avgUserSessionCount")
     logger.info(s"avgSessionLength: $avgSessionLength")
     logger.info(s"longestUserSessions:\n${longestUserSessionsMap.mkString("\n")}")
