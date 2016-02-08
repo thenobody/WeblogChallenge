@@ -12,7 +12,7 @@ import org.scalatest.{Matchers, FlatSpec}
  */
 class LogEntriesRDDSpec extends FlatSpec with Matchers with SparkContextLoan {
 
-  behavior of classOf[LogEntriesRDD[_]].getSimpleName
+  behavior of classOf[LogEntriesRDD].getSimpleName
 
   val sparkConf = SparkConf(getClass.getSimpleName, "local[*]")
 

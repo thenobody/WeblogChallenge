@@ -11,10 +11,10 @@ import scala.util.{Failure, Success, Try}
  * Created by antonvanco on 07/02/2016.
  */
 package object transformation {
-  implicit class LogEntriesRDD[T](self: RDD[T]) {
+  implicit class LogEntriesRDD(self: RDD[String]) {
     import LogEntriesTransformations._
     
-    def parseRawLogsToLogEntries = self.flatMap { case line: String =>
+    def parseRawLogsToLogEntries = self.flatMap { line: String =>
       Try {
         CsvUtil.parseCsv(line, ' ') match {
           case List(timestamp, _, clientIp, _, _, _, _, _, _, _, _, request, userAgent, _, _) =>

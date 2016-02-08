@@ -46,14 +46,14 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
     )
   )
 
-  it should "getAverageSessionLength" in withSparkContext(sparkConf) { sparkContext =>
+  it should "compute overall average session length" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = (1000 + 2000 + 0 + 0 + 0) / 5
-    val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getAverageSessionLength
+    val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input)).getAverageSessionLength
 
     result shouldEqual expResult
   }
 
-  it should "getUniqueUrisBySession" in withSparkContext(sparkConf) { sparkContext =>
+  it should "generate lists of unique URIs per user session" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Map(
       ("127.0.0.1:8080", userSession1) -> Set(
         new URI("https://localhost:1234/page1"),
@@ -73,7 +73,7 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
     result should contain theSameElementsAs expResult
   }
 
-  it should "getUserSessionsOrderedByUniqueUriCount" in withSparkContext(sparkConf) { sparkContext =>
+  it should "order user sesssions by unique URI count" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
       ("127.0.0.1:8080", userSession1) -> 2,
       ("127.0.0.1:8080", userSession2) -> 2,
@@ -86,7 +86,7 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
     result shouldEqual expResult
   }
 
-  it should "getUsersOrderedBySessionLength" in withSparkContext(sparkConf) { sparkContext =>
+  it should "order users by session length" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
       ("127.0.0.1:8080", 2000L),
       ("127.0.0.1:8080", 1000L),
@@ -99,7 +99,7 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
     result shouldEqual expResult
   }
 
-  it should "getSessionCountByUser" in withSparkContext(sparkConf) { sparkContext =>
+  it should "compute session counts for users" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = Seq(
       ("127.0.0.2:8080", 3L),
       ("127.0.0.1:8080", 2L)
@@ -109,21 +109,21 @@ class UserSessionLogEntriesRDDSpec extends FlatSpec with Matchers with SparkCont
     result shouldEqual expResult
   }
 
-  it should "getUserSessionCount" in withSparkContext(sparkConf) { sparkContext =>
+  it should "get overall session count" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = input.size
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getUserSessionCount
 
     result shouldEqual expResult
   }
 
-  it should "getUserCount" in withSparkContext(sparkConf) { sparkContext =>
+  it should "get overall user count" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = 2
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getUserCount
 
     result shouldEqual expResult
   }
 
-  it should "getAverageSessionCount" in withSparkContext(sparkConf) { sparkContext =>
+  it should "compute overall average session count" in withSparkContext(sparkConf) { sparkContext =>
     val expResult = 5.0 / 2
     val result = new UserSessionLogEntriesRDD(sparkContext.parallelize(input.toSeq)).getAverageSessionCount
 
