@@ -1,7 +1,23 @@
 # WeblogChallenge
+
 This is an interview challenge for Paytm Labs. Please feel free to fork. Pull Requests will be ignored.
 
 The challenge is to make make analytical observations about the data using the distributed tools below.
+
+## Running
+The processing can be started from project's root by:
+
+```bash
+sbt 'runMain net.antonvanco.paytm.weblogchallenge.Main'
+```
+
+The run the unit tests:
+
+```bash
+sbt clean test
+```
+
+In order to run this task using `spark-submit` all usages of `SparkConf("appName", "local[*]")` need to be changed to `SparkConf("appName")` (since SparkConf.setMaster takes precedence over `spark-submit --master`)
 
 ##Processing & Analytical goals:
 

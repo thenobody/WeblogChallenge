@@ -22,6 +22,8 @@ package object transformation {
      * Expects self to be an RDD of strings (lines) all of which are ELB log format
      * http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/access-log-collection.html#access-log-entry-format
      *
+     * Note that invalid ELB log entries (e.g. invalid URIs, timestamps, etc.) are discarded and the processing continues without them.
+     *
      * @return RDD of parsed LogEntries indexed by their respective UserKey
      */
     def parseRawLogsToLogEntries = self.flatMap { line: String =>

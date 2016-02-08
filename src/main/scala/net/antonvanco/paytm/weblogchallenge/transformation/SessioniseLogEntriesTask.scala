@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory
  * @param sessionLengthMillis defines the max timestamp difference between user's log entries in order to belong
  *                            into the same session
  */
-class SessioniseLogEntriesTask(sessionLengthMillis: Long) {
+class SessioniseLogEntriesTask(sessionLengthMillis: Long, inputPartitionCount: Int) {
 
   def execute(inputPath: String, sparkContext: SparkContext): RDD[((String, Session), Iterable[LogEntry])] = {
     sparkContext
       .textFile(inputPath)
       // repartitioning because the expected input is Gzipped and by default Spark creates a single partition when reading compressed input
-      .repartition(16)
+      .repartition(inputPartitionCount)
       .parseRawLogsToLogEntries
       .resolveSessionIdsForLogEntries(sessionLengthMillis)
       .aggregateLogEntriesByUserSession

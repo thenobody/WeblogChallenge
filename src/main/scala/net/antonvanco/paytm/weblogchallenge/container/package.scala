@@ -11,11 +11,12 @@ package object container {
   val config = ConfigFactory.load().resolve()
 
   val sessionTimeoutMillis = config.getLong("paytm.weblogchallenge.session.timeoutMillis")
+  val inputPartitionCount = config.getInt("paytm.weblogchallenge.session.inputPartitionCount")
 
   val topSessionsByUriCount = config.getInt("paytm.weblogchallenge.metrics.topRankings.sessionsByUriCount")
   val topUsersBySessionLength = config.getInt("paytm.weblogchallenge.metrics.topRankings.usersBySessionLength")
   val topUsersBySessionCount = config.getInt("paytm.weblogchallenge.metrics.topRankings.usersBySessionCount")
 
-  object SessioniseLogEntriesTaskInstance extends SessioniseLogEntriesTask(sessionTimeoutMillis)
+  object SessioniseLogEntriesTaskInstance extends SessioniseLogEntriesTask(sessionTimeoutMillis, inputPartitionCount)
 
 }
