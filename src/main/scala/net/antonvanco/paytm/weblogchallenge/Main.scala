@@ -24,11 +24,17 @@ import scala.collection.immutable.ListMap
  */
 object Main extends SparkContextLoan {
   val logger = LoggerFactory.getLogger(getClass)
-  val inputPath = "data/2015_07_22_mktplace_shop_web_log_sample.log.gz"
+  val inputPathParam = "--inputPath"
 
-  def main(args: Array[String]): Unit = withSparkContext(SparkConf(getClass.getSimpleName, "local[*]")) { sparkContext =>
+  def inputPath(args: Array[String]): String = args.toList match {
+    case `inputPathParam` +: result +: _ => result
+    case _ +: remainder => inputPath(remainder.toArray)
+    case _ => throw new IllegalArgumentException(s"$inputPathParam argument is missing or no value provided, aborting")
+  }
+
+  def main(args: Array[String]): Unit = withSparkContext(SparkConf(getClass.getSimpleName)) { sparkContext =>
     val userSessionsRdd = container.SessioniseLogEntriesTaskInstance
-      .execute(inputPath, sparkContext)
+      .execute(inputPath(args), sparkContext)
       .cache()
     // caching the result since we're going to use it multiple times (for individual metrics computations)
 

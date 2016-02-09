@@ -5,10 +5,23 @@ This is an interview challenge for Paytm Labs. Please feel free to fork. Pull Re
 The challenge is to make make analytical observations about the data using the distributed tools below.
 
 ## Running
-The processing can be started from project's root by:
+In order to run the processing using `spark-submit` the project needs to be assembled into a fat jar first. Note that this project was implemented with Spark 1.6.0 and compiles into Scala 2.10.6 (can be changed in `build.sbt`).
+
+To build the fat jar run:
 
 ```bash
-sbt 'runMain net.antonvanco.paytm.weblogchallenge.Main'
+sbt clean assembly
+```
+
+This will create a jar file containing all the required class files and dependencies (except spark which is declared as 'provided') in `target/scala-2.10/WeblogChallenge-assembly-1.0.jar`. This jar can then be used with `spark-submit`. The path to the input data file is specified by the `--inputPath <path to data.gz>` argument.
+
+The run the processing:
+
+```bash
+spark-submit --master <MASTER-URL> \
+--class net.antonvanco.paytm.weblogchallenge.Main \
+/path/to/WeblogChallenge/target/scala-2.10/WeblogChallenge-assembly-1.0.jar \
+--inputPath /path/to/data/2015_07_22_mktplace_shop_web_log_sample.log.gz
 ```
 
 The run the unit tests:
