@@ -15,7 +15,7 @@ sbt clean assembly
 
 This will create a jar file containing all the required class files and dependencies (except spark which is declared as 'provided') in `target/scala-2.10/WeblogChallenge-assembly-1.0.jar`. This jar can then be used with `spark-submit`. The path to the input data file is specified by the `--inputPath <path to data.gz>` argument.
 
-The run the processing:
+To run the processing:
 
 ```bash
 spark-submit --master <MASTER-URL> \
@@ -24,7 +24,7 @@ spark-submit --master <MASTER-URL> \
 --inputPath /path/to/data/2015_07_22_mktplace_shop_web_log_sample.log.gz
 ```
 
-The run the unit tests:
+To run the unit tests:
 
 ```bash
 sbt clean test
